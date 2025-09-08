@@ -27,7 +27,7 @@
         remote_src: yes
     - name: Configure Tomcat Users
       template:
-        src: tomcat-users.xml.j2
+        src: tomcat-users.xml
         dest: /opt/apache-tomcat-9.0.109/conf/tomcat-users.xml
     - name: Start Tomcat Service
       service:
