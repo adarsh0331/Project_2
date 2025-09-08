@@ -1,6 +1,6 @@
 ---
 - name: Install and Deploy WAR to Tomcat
-  hosts: tomcat_servers
+  hosts: localhost
   become: true
   vars:
     tomcat_version: 9.0.54
