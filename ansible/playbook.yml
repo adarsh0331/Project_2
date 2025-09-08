@@ -3,8 +3,8 @@
   hosts: localhost
   become: true
   vars:
-    tomcat_service: tomcat9
-    tomcat_webapps: /var/lib/tomcat9/webapps
+    tomcat_service: tomcat10
+    tomcat_webapps: /var/lib/tomcat10/webapps
 
   tasks:
     - name: Update apt cache
