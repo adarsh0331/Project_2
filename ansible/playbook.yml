@@ -3,13 +3,13 @@
   hosts: localhost
   become: yes
   vars:
-    tomcat_service: tomcat9
-    tomcat_webapps: /var/lib/tomcat9/webapps
+    tomcat_service: tomcat10.1.45
+    tomcat_webapps: /var/lib/tomcat10.1.45/webapps
 
   tasks:
     - name: Ensure Tomcat is installed
       apt:
-        name: tomcat9
+        name: tomcat10.1.45
         state: present
         update_cache: yes
 
