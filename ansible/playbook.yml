@@ -3,7 +3,7 @@
   hosts: localhost
   become: true
   vars:
-   tomcat_service: apache-tomcat-9.0.109
+   tomcat_service: tomcat9
    tomcat_webapps: /opt/apache-tomcat-9.0.109/webapps/manager
 
   tasks:
