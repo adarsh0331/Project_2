@@ -30,7 +30,8 @@
     - name: Copy WAR file to Tomcat webapps
       copy:
         src: "{{ artifact }}"
-        dest: "{{ tomcat_webapps }}/devops-app.war"
+        dest: "{{ tomcat_webapps }}/mindcircuitbatch15d-3.2.0.war"
+        remote_src: yes
         owner: tomcat
         group: tomcat
         mode: '0644'
