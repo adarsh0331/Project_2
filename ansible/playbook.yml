@@ -27,8 +27,12 @@
         remote_src: yes
     - name: Configure Tomcat Users
       template:
-        src: tomcat-users.xml
+        src: tomcat-users.xml.j2
         dest: /opt/apache-tomcat-9.0.109/conf/tomcat-users.xml
+        owner: root
+        group: root
+        mode: '0644'
+
     - name: Start Tomcat Service
       service:
         name: tomcat
