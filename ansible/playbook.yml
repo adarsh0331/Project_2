@@ -1,47 +1,64 @@
 ---
-#- name: Deploy WAR to Tomcat on localhost
-  # hosts: localhost
-#  become: yes
- # vars:
-  #  tomcat_service: tomcat10.1.45
-   # tomcat_webapps: /var/lib/tomcat10.1.45/webapps
-
- # tasks:
- #   - name: Ensure Tomcat is installed
- #     apt:
- #       name: tomcat10.1.45
-#        state: present
- #       update_cache: yes
-
-  #  - name: Ensure Tomcat service is running
-  #    service:
-   #     name: "{{ tomcat_service }}"
-  #      state: started
- #       enabled: yes#
- - name: Install Tomcat
+- name: Install and Deploy WAR to Tomcat
   hosts: tomcat_servers
   become: true
+  vars:
+    tomcat_version: 9.0.54
+    tomcat_home: /opt/apache-tomcat-9.0.54
+    tomcat_service_name: tomcat
+    tomcat_webapps: "{{ tomcat_home }}/webapps"
+
   tasks:
     - name: Install Java
       yum:
         name: java-1.8.0-openjdk
         state: present
+
     - name: Download Tomcat
       get_url:
-        url: "https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.54/bin/apache-tomcat-9.0.54.tar.gz"
+        url: "https://archive.apache.org/dist/tomcat/tomcat-9/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz"
         dest: /opt/
+
     - name: Extract Tomcat
       unarchive:
-        src: /opt/apache-tomcat-9.0.54.tar.gz
+        src: "/opt/apache-tomcat-{{ tomcat_version }}.tar.gz"
         dest: /opt/
         remote_src: yes
+        creates: "{{ tomcat_home }}"
+
     - name: Configure Tomcat Users
       template:
         src: tomcat-users.xml.j2
-        dest: /opt/apache-tomcat-9.0.54/conf/tomcat-users.xml
-    - name: Start Tomcat Service
+        dest: "{{ tomcat_home }}/conf/tomcat-users.xml"
+
+    - name: Create systemd service file for Tomcat
+      copy:
+        dest: /etc/systemd/system/{{ tomcat_service_name }}.service
+        content: |
+          [Unit]
+          Description=Apache Tomcat {{ tomcat_version }}
+          After=network.target
+
+          [Service]
+          Type=forking
+          Environment=JAVA_HOME=/usr/lib/jvm/jre
+          Environment=CATALINA_PID={{ tomcat_home }}/temp/tomcat.pid
+          Environment=CATALINA_HOME={{ tomcat_home }}
+          Environment=CATALINA_BASE={{ tomcat_home }}
+          ExecStart={{ tomcat_home }}/bin/startup.sh
+          ExecStop={{ tomcat_home }}/bin/shutdown.sh
+          Restart=always
+          User=root
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Reload systemd daemon
+      command: systemctl daemon-reload
+
+    - name: Ensure Tomcat service is started
       service:
-        name: tomcat
+        name: "{{ tomcat_service_name }}"
         state: started
         enabled: yes
 
@@ -49,11 +66,9 @@
       copy:
         src: "{{ artifact }}"
         dest: "{{ tomcat_webapps }}/devops-app.war"
-        owner: tomcat
-        group: tomcat
         mode: '0644'
 
     - name: Restart Tomcat
       service:
-        name: "{{ tomcat_service }}"
+        name: "{{ tomcat_service_name }}"
         state: restarted
