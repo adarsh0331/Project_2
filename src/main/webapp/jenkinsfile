@@ -11,7 +11,7 @@ pipeline {
         stage('CLONE GITHUB CODE') {
             steps {
                 echo 'In this stage code will be cloned'
-                git branch: 'main', url: 'https://github.com/devopstraininghub/mindcircuit15d.git'
+                git branch: 'main', url: 'https://github.com/adarsh0331/Project_2.git'
             }
         }
 		
@@ -26,9 +26,10 @@ pipeline {
             steps {
                 echo 'In this stage, Ansible will deploy the WAR file to Tomcat'
                 sh '''
-                    ARTIFACT=$(ls target/*.war | head -n 1)
+                    #ARTIFACT=$(ls target/*.war | head -n 1)
+                    ARTIFACT=$WORKSPACE/target/mindcircuitbatch15d-3.2.0.war
                     echo "Deploying artifact: $ARTIFACT"
-                    ansible-playbook ansible/playbook.yml -i ansible/inventory.ini --extra-vars "artifact=$ARTIFACT"
+                    ansible-playbook ansible/playbook.yml --extra-vars "artifact=$ARTIFACT"
                 '''
             }
         }
