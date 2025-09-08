@@ -16,14 +16,22 @@
         name: openjdk-11-jdk
         state: present
 
-    - name: Install Tomcat
-      apt:
-        name: tomcat9
-        state: present
-
-    - name: Ensure Tomcat service is running
+    - name: Download Tomcat
+      get_url:
+        url: "https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.109/bin/apache-tomcat-9.0.109.tar.gz"
+        dest: /opt/
+    - name: Extract Tomcat
+      unarchive:
+        src: /opt/apache-tomcat-9.0.109.tar.gz
+        dest: /opt/
+        remote_src: yes
+    - name: Configure Tomcat Users
+      template:
+        src: tomcat-users.xml.j2
+        dest: /opt/apache-tomcat-9.0.109/conf/tomcat-users.xml
+    - name: Start Tomcat Service
       service:
-        name: "{{ tomcat_service }}"
+        name: tomcat
         state: started
         enabled: yes
 
