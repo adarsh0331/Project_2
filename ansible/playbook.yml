@@ -4,7 +4,7 @@
   become: true
   vars:
    tomcat_service: tomcat10
-   tomcat_webapps: /opt/apache-tomcat-9.0.109/webapps/manager
+   tomcat_webapps: /var/lib/tomcat10/webapps
 
   tasks:
     - name: Update apt cache
