@@ -2,9 +2,9 @@
 - name: Install and Deploy WAR to Tomcat on Ubuntu
   hosts: localhost
   become: true
-  vars:
-    tomcat_service: tomcat10
-    tomcat_webapps: /var/lib/tomcat10/webapps
+  #vars:
+   # tomcat_service: tomcat10
+    #tomcat_webapps: /var/lib/tomcat10/webapps
 
   tasks:
     - name: Update apt cache
