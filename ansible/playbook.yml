@@ -1,6 +1,6 @@
 ---
 - name: Install and Deploy WAR to Tomcat on Ubuntu
-  hosts: tomcat_servers
+  hosts: localhost
   become: true
   vars:
     tomcat_service: tomcat9
