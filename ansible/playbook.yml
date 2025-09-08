@@ -1,6 +1,6 @@
 ---
 - name: Deploy WAR to Tomcat on localhost
-  hosts: web
+  hosts: localhost
   become: yes
   vars:
     tomcat_service: tomcat9
