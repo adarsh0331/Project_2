@@ -58,3 +58,9 @@ sudo apt update
 sudo apt install -y ansible
 ansible --version
 ```  
+### 5. Run & verify
+
+trigger the Jenkins job  Watch the console log.
+
+Jenkins runs mvn package → produces target/myapp.war and then deploy the application in tomcat server using ansible playbook.
+
