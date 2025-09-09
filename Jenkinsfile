@@ -1,11 +1,6 @@
 pipeline { 
     agent any
 
-    environment {
-        // Disable host key checking for ansible
-        ANSIBLE_HOST_KEY_CHECKING = "False"
-    }
-
     stages {
 	
         stage('CLONE GITHUB CODE') {
