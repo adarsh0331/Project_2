@@ -11,9 +11,9 @@
     #  apt:
      #   update_cache: yes
 
-    - name: Install Java (required for Tomcat)
-      yum:
-        name: openjdk-11-jdk
+     - name: Install Java (required for Tomcat on RHEL/CentOS/Amazon Linux)
+       yum:
+        name: java-11-openjdk-devel
         state: present
 
     - name: Install Tomcat
