@@ -1,108 +1,42 @@
 ---
-- name: Full Automation: Install Java, Setup Tomcat, Deploy WAR on Linux
-  hosts: local
-  become: yes
-
+- name: Install and Deploy WAR to Tomcat on Ubuntu
+  hosts: localhost
+  become: true
   vars:
-    java_package_debian: openjdk-11-jdk
-    java_package_redhat: java-11-openjdk
-    tomcat_version: 9.0.82
-    tomcat_install_dir: /opt/tomcat
-    war_file: /tmp/myapp.war
+   tomcat_service: tomcat10
+   tomcat_webapps: /var/lib/tomcat10/webapps
 
   tasks:
-    # ---------------- Install Java ----------------
-    - name: Install Java on Ubuntu/Debian Linux
-      apt:
-        name: "{{ java_package_debian }}"
-        state: present
-        update_cache: yes
-      when: ansible_os_family == "Debian"
+    #- name: Update apt cache
+    #  apt:
+     #   update_cache: yes
 
-    - name: Install Java on RHEL/CentOS Linux
+    - name: Install Java (required for Tomcat)
       yum:
-        name: "{{ java_package_redhat }}"
+        name: openjdk-11-jdk
         state: present
-      when: ansible_os_family == "RedHat"
 
-    # ---------------- Setup Tomcat ----------------
-    - name: Create Tomcat group
-      group:
-        name: tomcat
+    - name: Install Tomcat
+      yum:
+        name: "{{ tomcat_service }}"
+        state: present
 
-    - name: Create Tomcat user
-      user:
-        name: tomcat
-        shell: /bin/false
-        group: tomcat
-        create_home: no
-
-    - name: Download Tomcat
-      get_url:
-        url: "https://archive.apache.org/dist/tomcat/tomcat-9/v{{ tomcat_version | regex_replace('\\..*','') }}/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz"
-        dest: /tmp/apache-tomcat-{{ tomcat_version }}.tar.gz
-
-    - name: Create Tomcat install dir
-      file:
-        path: "{{ tomcat_install_dir }}"
-        state: directory
-        mode: '0755'
-
-    - name: Extract Tomcat
-      unarchive:
-        src: /tmp/apache-tomcat-{{ tomcat_version }}.tar.gz
-        dest: "{{ tomcat_install_dir }}"
-        remote_src: yes
-        extra_opts: [--strip-components=1]
-
-    - name: Change ownership of Tomcat
-      file:
-        path: "{{ tomcat_install_dir }}"
-        state: directory
-        owner: tomcat
-        group: tomcat
-        recurse: yes
-
-    # ---------------- Tomcat Service ----------------
-    - name: Create Tomcat systemd service
-      copy:
-        dest: /etc/systemd/system/tomcat.service
-        content: |
-          [Unit]
-          Description=Apache Tomcat
-          After=network.target
-
-          [Service]
-          Type=forking
-          User=tomcat
-          Group=tomcat
-          Environment="JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64"
-          Environment="CATALINA_HOME={{ tomcat_install_dir }}"
-          ExecStart={{ tomcat_install_dir }}/bin/startup.sh
-          ExecStop={{ tomcat_install_dir }}/bin/shutdown.sh
-          Restart=on-failure
-
-          [Install]
-          WantedBy=multi-user.target
-
-    - name: Reload systemd
-      systemd:
-        daemon_reload: yes
-
-    - name: Enable and start Tomcat
-      systemd:
-        name: tomcat
+    - name: Ensure Tomcat service is running
+      service:
+        name: "{{ tomcat_service }}"
         state: started
         enabled: yes
 
-    # ---------------- Deploy WAR ----------------
-    - name: Deploy WAR file
+    - name: Copy WAR file to Tomcat webapps
       copy:
-        src: "{{ war_file }}"
-        dest: "{{ tomcat_install_dir }}/webapps/myapp.war"
+        src: "{{ artifact }}"
+        dest: "{{ tomcat_webapps }}/mindcircuitbatch15d-3.2.0.war"
+        remote_src: yes
+        owner: tomcat
+        group: tomcat
         mode: '0644'
 
-    - name: Restart Tomcat after deployment
-      systemd:
-        name: tomcat
+    - name: Restart Tomcat
+      service:
+        name: "{{ tomcat_service }}"
         state: restarted
