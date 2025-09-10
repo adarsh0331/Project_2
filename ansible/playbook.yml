@@ -7,9 +7,9 @@
    tomcat_webapps: /var/lib/tomcat10/webapps
 
   tasks:
-    - name: Update apt cache
-      apt:
-        update_cache: yes
+    #- name: Update apt cache
+    #  apt:
+     #   update_cache: yes
 
     - name: Install Java (required for Tomcat)
       apt:
