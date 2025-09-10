@@ -4,7 +4,7 @@
   become: true
   vars:
     java_pkg: java-1.8.0-openjdk-devel
-    tomcat_version: 9.0.91
+    tomcat_version: 9.0.96
     tomcat_install_dir: /opt/tomcat
     tomcat_service: tomcat
 
