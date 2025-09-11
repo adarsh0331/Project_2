@@ -1,6 +1,9 @@
+<img width="940" height="364" alt="image" src="https://github.com/user-attachments/assets/c3d2a8b6-2ae0-428a-96b3-18c5dd7792ec" />
+
+
 ### 1. Prerequisites (what you need)
 
-One Ubuntu servers 
+One t3.micro Ec2 instance   
 
 A Git repo (GitHub) With all files
 
