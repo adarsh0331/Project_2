@@ -1,3 +1,15 @@
+```mermaid
+graph TD
+    A[Developer] -->|Push Code| B(GitHub Repository)
+    B -->|Webhook| C(Jenkins)
+    C -->|Checkout Code| D[Git Clone]
+    D -->|Build| E[Maven]
+    E -->|Generate WAR| F[Ansible]
+    F -->|Deploy WAR| G[Tomcat on EC2]
+    G -->|Serve App| H[End User]
+```
+
+
 # Small-Scale CI/CD Project on AWS
 
 ![CI/CD Pipeline Banner](https://via.placeholder.com/1200x300?text=CI/CD+Pipeline+on+AWS) <!-- Replace with actual banner image if available -->
